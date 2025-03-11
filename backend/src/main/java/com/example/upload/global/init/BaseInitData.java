@@ -40,6 +40,10 @@ public class BaseInitData {
             return;
         }
 
+        if (AppConfig.isTest()) {
+            Ut.file.rmDir(AppConfig.getGenFileDirPath());
+        }
+
         // 회원 샘플데이터 생성
         memberService.join("system", "system1234", "시스템", "");
         memberService.join("admin", "admin1234", "관리자", "");
