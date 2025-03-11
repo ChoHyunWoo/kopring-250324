@@ -20,6 +20,7 @@ public class PostGenFile extends BaseTime {
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
 
+    private int fileNo;
     private String typeCode;
     private String filePath;
     private String originalFileName;
