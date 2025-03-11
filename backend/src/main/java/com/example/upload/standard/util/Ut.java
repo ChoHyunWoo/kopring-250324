@@ -24,6 +24,7 @@ import java.util.UUID;
 public class Ut {
 
     public static class file {
+        private static final String ORIGINAL_FILE_NAME_SEPARATOR = "--originalFileName_";
         private static final Map<String, String> MIME_TYPE_MAP = new LinkedHashMap<>() {{
             put("application/json", "json");
             put("text/plain", "txt");
@@ -50,8 +51,7 @@ public class Ut {
         }};
 
         @SneakyThrows
-        public static String downloadByHttp(String url, String dirPath) {
-            // HttpClient 생성
+        public static String downloadByHttp(String url, String dirPath, boolean uniqueFilename) {            // HttpClient 생성
             HttpClient client = HttpClient.newBuilder()
                     .followRedirects(HttpClient.Redirect.ALWAYS)
                     .build();
@@ -78,7 +78,11 @@ public class Ut {
             }
 
             // 파일명 추출
-            String filename = getFilenameFromUrl(url);
+            String filename = getFilenameWithoutExtFromUrl(url);
+
+            filename = uniqueFilename
+                    ? UUID.randomUUID() + ORIGINAL_FILE_NAME_SEPARATOR + filename
+                    : filename;
 
             String newFilePath = dirPath + "/" + filename + "." + extension;
 
@@ -91,6 +95,27 @@ public class Ut {
             String mineType = AppConfig.getTika().detect(filePath);
 
             return MIME_TYPE_MAP.getOrDefault(mineType, "tmp");
+        }
+
+        public static String getOriginalFileName(String filePath) {
+            String originalFileName = Path.of(filePath).getFileName().toString();
+
+            return originalFileName.contains(ORIGINAL_FILE_NAME_SEPARATOR)
+                    ? originalFileName.substring(originalFileName.indexOf(ORIGINAL_FILE_NAME_SEPARATOR) + ORIGINAL_FILE_NAME_SEPARATOR.length())
+                    : originalFileName;
+        }
+
+        public static String getFileExt(String filePath) {
+            String filename = getOriginalFileName(filePath);
+
+            return filename.contains(".")
+                    ? filename.substring(filename.lastIndexOf('.') + 1)
+                    : "";
+        }
+
+        @SneakyThrows
+        public static long getFileSize(String filePath) {
+            return Files.size(Path.of(filePath));
         }
 
         @SneakyThrows
@@ -109,7 +134,7 @@ public class Ut {
                     .orElse("tmp");
         }
 
-        private static String getFilenameFromUrl(String url) {
+        private static String getFilenameWithoutExtFromUrl(String url) {
             try {
                 String path = new URI(url).getPath();
                 String filename = Path.of(path).getFileName().toString();

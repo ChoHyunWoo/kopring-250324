@@ -4,6 +4,8 @@ import com.example.upload.domain.member.member.entity.Member;
 import com.example.upload.domain.member.member.service.MemberService;
 import com.example.upload.domain.post.post.entity.Post;
 import com.example.upload.domain.post.post.service.PostService;
+import com.example.upload.global.app.AppConfig;
+import com.example.upload.standard.util.Ut;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
@@ -71,6 +73,9 @@ public class BaseInitData {
         postService.write(user2, "title7", "content7", true, true);
         postService.write(user2, "title8", "content8", true, true);
         postService.write(user2, "title9", "content9", true, true);
+
+        String newFilePath = Ut.file.downloadByHttp("https://picsum.photos/id/237/200/300", AppConfig.getTempDirPath(), true);
+        post1.addGenFile("attachment", newFilePath);
 
         for(int i = 10; i <= 100; i++) {
             postService.write(user1, "title" + i, "content" + i, i % 2 != 0, i % 3 != 0);
