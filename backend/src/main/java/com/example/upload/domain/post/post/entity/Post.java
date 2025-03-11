@@ -37,6 +37,10 @@ public class Post extends BaseTime {
     private List<PostGenFile> genFiles = new ArrayList<>();
 
     public PostGenFile addGenFile(String typeCode, String filePath) {
+        return addGenFile(typeCode, 0, filePath);
+    }
+    
+    public PostGenFile addGenFile(String typeCode, int fileNo, String filePath) {
 
         String originalFileName = Ut.file.getOriginalFileName(filePath);
         String fileExt = Ut.file.getFileExt(filePath);
@@ -53,7 +57,7 @@ public class Post extends BaseTime {
 
         String fileName = UUID.randomUUID() + "." + fileExt;
         long fileSize = Ut.file.getFileSize(filePath);
-        int fileNo = getNextGenFileNo(typeCode);
+        fileNo = fileNo == 0 ? getNextGenFileNo(typeCode) : fileNo;
 
         PostGenFile genFile = PostGenFile.builder()
                 .post(this)
@@ -97,6 +101,56 @@ public class Post extends BaseTime {
                     genFiles.remove(genFile);
                     Ut.file.rm(filePath);
                 });
+    }
+
+    public void modifyGenFile(String typeCode, int fileNo, String filePath) {
+        getGenFileByTypeCodeAndFileNo(
+                typeCode,
+                fileNo
+        )
+                .ifPresent(genFile -> {
+                    Ut.file.rm(genFile.getFilePath());
+
+                    String originalFileName = Ut.file.getOriginalFileName(filePath);
+                    String fileExt = Ut.file.getFileExt(filePath);
+                    String fileExtTypeCode = Ut.file.getFileExtTypeCodeFromFileExt(fileExt);
+                    String fileExtType2Code = Ut.file.getFileExtType2CodeFromFileExt(fileExt);
+
+                    Map<String, Object> metadata = Ut.file.getMetadata(filePath);
+
+                    String metadataStr = metadata
+                            .entrySet()
+                            .stream()
+                            .map(entry -> entry.getKey() + "-" + entry.getValue())
+                            .collect(Collectors.joining(";"));
+
+                    String fileName = UUID.randomUUID() + "." + fileExt;
+                    long fileSize = Ut.file.getFileSize(filePath);
+
+                    genFile.setOriginalFileName(originalFileName);
+                    genFile.setMetadata(metadataStr);
+                    genFile.setFileDateDir(Ut.date.getCurrentDateFormatted("yyyy_MM_dd"));
+                    genFile.setFileExt(fileExt);
+                    genFile.setFileExtTypeCode(fileExtTypeCode);
+                    genFile.setFileExtType2Code(fileExtType2Code);
+                    genFile.setFileName(fileName);
+                    genFile.setFileSize(fileSize);
+
+                    Ut.file.mv(filePath, genFile.getFilePath());
+                });
+    }
+
+    public void putGenFile(String typeCode, int fileNo, String filePath) {
+        Optional<PostGenFile> opPostGenFile = getGenFileByTypeCodeAndFileNo(
+                typeCode,
+                fileNo
+        );
+
+        if (opPostGenFile.isPresent()) {
+            modifyGenFile(typeCode, fileNo, filePath);
+        } else {
+            addGenFile(typeCode, fileNo, filePath);
+        }
     }
 
     public Comment addComment(Member author, String content) {

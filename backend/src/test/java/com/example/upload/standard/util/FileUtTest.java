@@ -15,7 +15,7 @@ public class FileUtTest {
     @Test
     @DisplayName("downloadByHttp")
     public void t1() {
-        String newFilePath = Ut.file.downloadByHttp("https://picsum.photos/id/237/200/300", AppConfig.getTempDirPath(), true);
+        String newFilePath = Ut.file.downloadByHttp("https://picsum.photos/id/237/200/300", AppConfig.getTempDirPath());
 
         // newFilePath 의 확장자가 jpg 인지 확인
         assertThat(newFilePath).endsWith(".jpg");
@@ -26,7 +26,7 @@ public class FileUtTest {
     @Test
     @DisplayName("getExtensionByTika")
     void tika() {
-        String newFilePath = Ut.file.downloadByHttp("https://picsum.photos/id/237/200/300", AppConfig.getTempDirPath(), true);
+        String newFilePath = Ut.file.downloadByHttp("https://picsum.photos/id/237/200/300", AppConfig.getTempDirPath());
 
         String ext = Ut.file.getExtensionByTika(newFilePath);
         assertThat(ext).isEqualTo("jpg");

@@ -107,6 +107,11 @@ public class Ut {
         }
 
         @SneakyThrows
+        public static String downloadByHttp(String url, String dirPath) {
+            return downloadByHttp(url, dirPath, true);
+        }
+
+        @SneakyThrows
         public static String downloadByHttp(String url, String dirPath, boolean uniqueFilename) {            // HttpClient 생성
             HttpClient client = HttpClient.newBuilder()
                     .followRedirects(HttpClient.Redirect.ALWAYS)

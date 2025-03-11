@@ -78,16 +78,22 @@ public class BaseInitData {
         postService.write(user2, "title8", "content8", true, true);
         postService.write(user2, "title9", "content9", true, true);
 
-        String genFile1FilePath = Ut.file.downloadByHttp("https://picsum.photos/id/237/200/300", AppConfig.getTempDirPath(), true);
+        String genFile1FilePath = Ut.file.downloadByHttp("https://picsum.photos/id/237/200/300", AppConfig.getTempDirPath());
         post1.addGenFile("attachment", genFile1FilePath);
 
-        String genFile2FilePath = Ut.file.downloadByHttp("https://picsum.photos/id/238/200/300", AppConfig.getTempDirPath(), true);
+        String genFile2FilePath = Ut.file.downloadByHttp("https://picsum.photos/id/238/200/300", AppConfig.getTempDirPath());
         post1.addGenFile("attachment", genFile2FilePath);
 
-        String genFile3FilePath = Ut.file.downloadByHttp("https://picsum.photos/id/239/500/500", AppConfig.getTempDirPath(), true);
+        String genFile3FilePath = Ut.file.downloadByHttp("https://picsum.photos/id/239/500/500", AppConfig.getTempDirPath());
         post1.addGenFile("thumbnail", genFile3FilePath);
 
         post1.deleteGenFile("attachment", 2);
+
+        String genFile4FilePath = Ut.file.downloadByHttp("https://picsum.photos/id/240/600/500", AppConfig.getTempDirPath());
+        post1.modifyGenFile("thumbnail", 1, genFile4FilePath);
+
+        String genFile5FilePath = Ut.file.downloadByHttp("https://picsum.photos/id/241/500/500", AppConfig.getTempDirPath());
+        post1.putGenFile("attachment", 3, genFile5FilePath);
 
         for(int i = 10; i <= 100; i++) {
             postService.write(user1, "title" + i, "content" + i, i % 2 != 0, i % 3 != 0);

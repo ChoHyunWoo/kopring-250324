@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class BaseEntity {
+public abstract class BaseEntity {
 
     @Id // PRIMARY KEY
     @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
