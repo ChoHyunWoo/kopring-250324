@@ -58,7 +58,6 @@ public class Post extends BaseTime {
         PostGenFile genFile = PostGenFile.builder()
                 .post(this)
                 .typeCode(typeCode)
-                .filePath(filePath)
                 .fileNo(fileNo)
                 .originalFileName(originalFileName)
                 .metadata(metadataStr)
