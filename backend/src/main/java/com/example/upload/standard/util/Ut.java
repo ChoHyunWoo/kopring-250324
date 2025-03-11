@@ -8,6 +8,10 @@ import io.jsonwebtoken.security.Keys;
 import lombok.SneakyThrows;
 
 import javax.crypto.SecretKey;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,10 +21,7 @@ import java.net.http.HttpResponse;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Ut {
 
@@ -50,6 +51,58 @@ public class Ut {
             put("video/webm", "webm");
             put("video/x-msvideo", "avi");
         }};
+
+        public static String getFileExtTypeCodeFromFileExt(String ext) {
+            return switch (ext) {
+                case "jpeg", "jpg", "gif", "png", "svg", "webp" -> "img";
+                case "mp4", "avi", "mov" -> "video";
+                case "mp3" -> "audio";
+                default -> "etc";
+            };
+        }
+
+        public static String getFileExtType2CodeFromFileExt(String ext) {
+            return switch (ext) {
+                case "jpeg", "jpg" -> "jpg";
+                default -> ext;
+            };
+        }
+
+        public static Map<String, Object> getMetadata(String filePath) {
+            String ext = getFileExt(filePath);
+            String fileExtTypeCode = getFileExtTypeCodeFromFileExt(ext);
+
+            if (fileExtTypeCode.equals("img")) return getImgMetadata(filePath);
+
+            return Map.of();
+        }
+
+        private static Map<String, Object> getImgMetadata(String filePath) {
+            Map<String, Object> metadata = new LinkedHashMap<>();
+
+            try (ImageInputStream input = ImageIO.createImageInputStream(new File(filePath))) {
+                Iterator<ImageReader> readers = ImageIO.getImageReaders(input);
+
+                if (!readers.hasNext()) {
+                    throw new IOException("지원되지 않는 이미지 형식: " + filePath);
+                }
+
+                ImageReader reader = readers.next();
+                reader.setInput(input);
+
+                int width = reader.getWidth(0);
+                int height = reader.getHeight(0);
+
+                metadata.put("width", width);
+                metadata.put("height", height);
+
+                reader.dispose();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return metadata;
+        }
 
         @SneakyThrows
         public static String downloadByHttp(String url, String dirPath, boolean uniqueFilename) {            // HttpClient 생성

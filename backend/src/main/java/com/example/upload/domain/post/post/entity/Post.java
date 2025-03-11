@@ -10,10 +10,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @AllArgsConstructor
@@ -42,6 +40,17 @@ public class Post extends BaseTime {
 
         String originalFileName = Ut.file.getOriginalFileName(filePath);
         String fileExt = Ut.file.getFileExt(filePath);
+        String fileExtTypeCode = Ut.file.getFileExtTypeCodeFromFileExt(fileExt);
+        String fileExtType2Code = Ut.file.getFileExtType2CodeFromFileExt(fileExt);
+
+        Map<String, Object> metadata = Ut.file.getMetadata(filePath);
+
+        String metadataStr = metadata
+                .entrySet()
+                .stream()
+                .map(entry -> entry.getKey() + "-" + entry.getValue())
+                .collect(Collectors.joining(";"));
+
         String fileName = UUID.randomUUID() + "." + fileExt;
         long fileSize = Ut.file.getFileSize(filePath);
 
@@ -50,7 +59,10 @@ public class Post extends BaseTime {
                 .typeCode(typeCode)
                 .filePath(filePath)
                 .originalFileName(originalFileName)
+                .metadata(metadataStr)
                 .fileDateDir(Ut.date.getCurrentDateFormatted("yyyy_MM_dd"))
+                .fileExtTypeCode(fileExtTypeCode)
+                .fileExtType2Code(fileExtType2Code)
                 .fileExt(fileExt)
                 .fileName(fileName)
                 .fileSize(fileSize)
