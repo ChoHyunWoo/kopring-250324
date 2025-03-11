@@ -20,7 +20,7 @@ public class AuthTokenService {
 
     String genAccessToken(Member member) {
 
-        return Ut.Jwt.createToken(
+        return Ut.jwt.createToken(
                 keyString,
                 expireSeconds,
                 Map.of("id", member.getId(), "username", member.getUsername(), "nickname", member.getNickname())
@@ -29,9 +29,9 @@ public class AuthTokenService {
 
     Map<String, Object> getPayload(String token) {
 
-        if(!Ut.Jwt.isValidToken(keyString, token)) return null;
+        if(!Ut.jwt.isValidToken(keyString, token)) return null;
 
-        Map<String, Object> payload = Ut.Jwt.getPayload(keyString, token);
+        Map<String, Object> payload = Ut.jwt.getPayload(keyString, token);
         Number idNo = (Number)payload.get("id");
         long id = idNo.longValue();
         String username = (String)payload.get("username");

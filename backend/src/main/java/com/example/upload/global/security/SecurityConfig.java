@@ -68,7 +68,7 @@ public class SecurityConfig {
                                             response.setContentType("application/json;charset=UTF-8");
                                             response.setStatus(401);
                                             response.getWriter().write(
-                                                    Ut.Json.toString(
+                                                    Ut.json.toString(
                                                             new RsData("401-1", "잘못된 인증키입니다.")
                                                     )
                                             );
@@ -79,7 +79,7 @@ public class SecurityConfig {
                                             response.setContentType("application/json;charset=UTF-8");
                                             response.setStatus(403);
                                             response.getWriter().write(
-                                                    Ut.Json.toString(
+                                                    Ut.json.toString(
                                                             new RsData("403-1", "접근 권한이 없습니다.")
                                                     )
                                             );

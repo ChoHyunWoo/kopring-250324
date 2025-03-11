@@ -8,10 +8,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AppConfig {
 
-    public static boolean isNotProd() {
-        return true;
-    }
-
     @Getter
     public static ObjectMapper objectMapper;
 
@@ -22,5 +18,13 @@ public class AppConfig {
 
     public static String getSiteFrontUrl() {
         return "http://localhost:3000";
+    }
+
+    public static boolean isNotProd() {
+        return true;
+    }
+
+    public static String getTempDirPath() {
+        return System.getProperty("java.io.tmpdir");
     }
 }
