@@ -65,3 +65,5 @@ springdoc:
 custom:
   jwt:
     expire-seconds: "#{5}"
+  genFile:
+    dirPath: c:/temp/glog_dev
