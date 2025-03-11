@@ -20,7 +20,7 @@ public class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
     @Setter(AccessLevel.PRIVATE)
     @EqualsAndHashCode.Include
-    private Long id; // long -> null X, Long -> null O
+    protected Long id; // long -> null X, Long -> null O
 
     public String getModelName() {
         String simpleName = this.getClass().getSimpleName();

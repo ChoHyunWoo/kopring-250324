@@ -41,7 +41,7 @@ public class BaseInitData {
         }
 
         if (AppConfig.isTest()) {
-            Ut.file.rmDir(AppConfig.getGenFileDirPath());
+            Ut.file.rm(AppConfig.getGenFileDirPath());
         }
 
         // 회원 샘플데이터 생성
@@ -83,6 +83,11 @@ public class BaseInitData {
 
         String genFile2FilePath = Ut.file.downloadByHttp("https://picsum.photos/id/238/200/300", AppConfig.getTempDirPath(), true);
         post1.addGenFile("attachment", genFile2FilePath);
+
+        String genFile3FilePath = Ut.file.downloadByHttp("https://picsum.photos/id/239/500/500", AppConfig.getTempDirPath(), true);
+        post1.addGenFile("thumbnail", genFile3FilePath);
+
+        post1.deleteGenFile("attachment", 2);
 
         for(int i = 10; i <= 100; i++) {
             postService.write(user1, "title" + i, "content" + i, i % 2 != 0, i % 3 != 0);

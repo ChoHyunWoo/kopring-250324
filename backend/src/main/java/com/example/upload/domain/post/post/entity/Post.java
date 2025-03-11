@@ -84,6 +84,22 @@ public class Post extends BaseTime {
                 .orElse(0) + 1;
     }
 
+    public Optional<PostGenFile> getGenFileByTypeCodeAndFileNo(String typeCode, int fileNo) {
+        return genFiles.stream()
+                .filter(genFile -> genFile.getTypeCode().equals(typeCode))
+                .filter(genFile -> genFile.getFileNo() == fileNo)
+                .findFirst();
+    }
+
+    public void deleteGenFile(String typeCode, int fileNo) {
+        getGenFileByTypeCodeAndFileNo(typeCode, fileNo)
+                .ifPresent(genFile -> {
+                    String filePath = genFile.getFilePath();
+                    genFiles.remove(genFile);
+                    Ut.file.rm(filePath);
+                });
+    }
+
     public Comment addComment(Member author, String content) {
 
         Comment comment = Comment
@@ -159,4 +175,5 @@ public class Post extends BaseTime {
 
         return actor.equals(this.author);
     }
+
 }
