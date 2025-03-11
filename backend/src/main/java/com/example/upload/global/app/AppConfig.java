@@ -2,6 +2,7 @@ package com.example.upload.global.app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,4 +28,13 @@ public class AppConfig {
     public static String getTempDirPath() {
         return System.getProperty("java.io.tmpdir");
     }
+
+    @Getter
+    private static Tika tika;
+
+    @Autowired
+    public void setTika(Tika tika) {
+        AppConfig.tika = tika;
+    }
+
 }

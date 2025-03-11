@@ -73,6 +73,10 @@ public class Ut {
 
             String extension = getExtensionFromResponse(response);
 
+            if (extension.equals("tmp")) {
+                extension = getExtensionByTika(tempFilePath);
+            }
+
             // 파일명 추출
             String filename = getFilenameFromUrl(url);
 
@@ -81,6 +85,12 @@ public class Ut {
             mv(tempFilePath, newFilePath);
 
             return newFilePath;
+        }
+
+        public static String getExtensionByTika(String filePath) {
+            String mineType = AppConfig.getTika().detect(filePath);
+
+            return MIME_TYPE_MAP.getOrDefault(mineType, "tmp");
         }
 
         @SneakyThrows
