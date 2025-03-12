@@ -3,6 +3,8 @@ package com.example.upload.domain.post.post.entity;
 import com.example.upload.domain.member.member.entity.Member;
 import com.example.upload.domain.post.comment.entity.Comment;
 import com.example.upload.domain.post.genFile.entity.PostGenFile;
+import com.example.upload.global.dto.Empty;
+import com.example.upload.global.dto.RsData;
 import com.example.upload.global.entity.BaseTime;
 import com.example.upload.global.exception.ServiceException;
 import com.example.upload.standard.util.Ut;
@@ -229,4 +231,21 @@ public class Post extends BaseTime {
         return actor.equals(this.author);
     }
 
+    public void checkActorCanMakeNewGenFile(Member actor) {
+        Optional.of(
+                        getCheckActorCanMakeNewGenFileRs(actor)
+                )
+                .filter(RsData::isFail)
+                .ifPresent(rsData -> {
+                    throw new ServiceException(rsData.getMsg(), rsData.getCode());
+                });
+    }
+
+    public RsData<Empty> getCheckActorCanMakeNewGenFileRs(Member actor) {
+        if (actor == null) return new RsData<>("401-1", "로그인 후 이용해주세요.");
+
+        if (actor.equals(author)) return RsData.OK;
+
+        return new RsData<>("403-1", "작성자만 파일을 업로드할 수 있습니다.");
+    }
 }

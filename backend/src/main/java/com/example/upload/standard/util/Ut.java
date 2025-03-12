@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.SneakyThrows;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.SecretKey;
 import javax.imageio.ImageIO;
@@ -210,6 +211,19 @@ public class Ut {
                 // URL에서 파일명을 추출할 수 없는 경우 타임스탬프 사용
                 return "download_" + System.currentTimeMillis();
             }
+        }
+
+        @SneakyThrows
+        public static String toFile(MultipartFile multipartFile, String dirPath) {
+            if (multipartFile == null) return "";
+            if (multipartFile.isEmpty()) return "";
+
+            String filePath = dirPath + "/" + UUID.randomUUID() + ORIGINAL_FILE_NAME_SEPARATOR + multipartFile.getOriginalFilename();
+
+            Ut.file.mkdir(dirPath);
+            multipartFile.transferTo(new File(filePath));
+
+            return filePath;
         }
 
         @SneakyThrows
