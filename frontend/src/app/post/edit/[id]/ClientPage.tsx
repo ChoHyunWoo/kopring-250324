@@ -2,11 +2,31 @@
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { components } from "@/lib/backend/apiV1/schema";
 import client from "@/lib/backend/client";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+const editFormSchema = z.object({
+  title: z.string().min(1, "제목을 입력해주세요."),
+  content: z.string().min(1, "내용을 입력해주세요."),
+  published: z.boolean(),
+  listed: z.boolean(),
+});
+
+type WriteInputs = z.infer<typeof editFormSchema>;
 
 export default function ClinetPage({
   post,
@@ -14,26 +34,21 @@ export default function ClinetPage({
   post: components["schemas"]["PostWithContentDto"];
 }) {
   const router = useRouter();
+  const form = useForm<WriteInputs>({
+    resolver: zodResolver(editFormSchema),
+    defaultValues: {
+      title: post.title,
+      content: post.content,
+      published: post.published,
+      listed: post.listed,
+    },
+  });
 
-  async function write(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    const form = e.target as HTMLFormElement;
-
-    const title = form._title.value;
-    const content = form.content.value;
-    const published = form.published.checked;
-    const listed = form.listed.checked;
-
-    if (title.trim().length === 0) {
-      alert("제목을 입력해주세요.");
-      return;
-    }
-
-    if (content.trim().length === 0) {
-      alert("내용을 입력해주세요.");
-      return;
-    }
+  async function write(data: WriteInputs) {
+    const title = data.title;
+    const content = data.content;
+    const published = data.published;
+    const listed = data.listed;
 
     const response = await client.PUT("/api/v1/posts/{id}", {
       params: {
@@ -61,30 +76,75 @@ export default function ClinetPage({
     <div className="container p-4 mx-auto">
       <h1 className="text-2xl font-bold text-center">글 수정</h1>
       <hr />
-      <form onSubmit={write} className="flex flex-col gap-3 py-4">
-        <div className="flex items-center gap-3">
-          <label>공개 여부 : </label>
-          <Checkbox name="published" defaultChecked={post.published} />
-        </div>
-        <div className="flex items-center gap-3">
-          <label>검색 여부 : </label>
-          <Checkbox name="listed" defaultChecked={post.listed} />
-        </div>
-        <Input
-          type="text"
-          name="_title"
-          placeholder="제목 입력"
-          defaultValue={post.title}
-          className="border-2 border-black"
-        />
-        <Textarea
-          name="content"
-          placeholder="내용 입력"
-          className="h-[calc(100dvh-300px)]"
-          defaultValue={post.content}
-        />
-        <Button type="submit">수정</Button>
-      </form>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(write)}
+          className="flex flex-col gap-3 py-4"
+        >
+          <div className="flex items-center gap-3">
+            <label>공개 여부 : </label>
+            <FormField
+              control={form.control}
+              name="published"
+              render={({ field }) => (
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              )}
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <label>검색 여부 : </label>
+            <FormField
+              control={form.control}
+              name="listed"
+              render={({ field }) => (
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              )}
+            />
+          </div>
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>제목</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="text"
+                    placeholder="제목 입력"
+                    className="border-2 border-black"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="content"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>내용</FormLabel>
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    placeholder="내용 입력"
+                    className="h-[calc(100dvh-300px)]"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">수정</Button>
+        </form>
+      </Form>
     </div>
   );
 }
