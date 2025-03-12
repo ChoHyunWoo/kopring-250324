@@ -1,7 +1,7 @@
+import { client } from "@/lib/backend/client";
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
-import client from "./lib/backend/client";
 
 export async function middleware(request: NextRequest) {
   const myCookies = await cookies();

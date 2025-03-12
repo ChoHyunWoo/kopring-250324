@@ -1,6 +1,6 @@
 "use client";
 
-import client from "@/lib/backend/client";
+import { client } from "@/lib/backend/client";
 
 import NarrowHeader from "@/components/business/NarrowHeader";
 import WideHeader from "@/components/business/WideHeader";
@@ -15,7 +15,6 @@ export default function ClinetLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   const {
     setLoginMember,
     isLogin,
@@ -35,7 +34,7 @@ export default function ClinetLayout({
     isAdmin,
     setNoLoginMember,
   };
- 
+
   async function fetchLoginMember() {
     const response = await client.GET("/api/v1/members/me", {
       credentials: "include",

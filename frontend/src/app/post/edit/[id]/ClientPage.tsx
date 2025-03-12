@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { components } from "@/lib/backend/apiV1/schema";
-import client from "@/lib/backend/client";
+import { client, clientWithNoHeaders } from "@/lib/backend/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -22,8 +22,9 @@ import { z } from "zod";
 const editFormSchema = z.object({
   title: z.string().min(1, "제목을 입력해주세요."),
   content: z.string().min(1, "내용을 입력해주세요."),
-  published: z.boolean(),
-  listed: z.boolean(),
+  published: z.boolean().optional(),
+  listed: z.boolean().optional(),
+  attachment_0: z.instanceof(File).optional(),
 });
 
 type WriteInputs = z.infer<typeof editFormSchema>;
@@ -66,6 +67,31 @@ export default function ClinetPage({
     if (response.error) {
       alert(response.error.msg);
       return;
+    }
+
+    // 파일 업로드 처리
+    if (data.attachment_0) {
+      const formData = new FormData();
+      formData.append("file", data.attachment_0);
+
+      const uploadResponse = await clientWithNoHeaders.POST(
+        "/api/v1/posts/{postId}/genFiles/{typeCode}",
+        {
+          params: {
+            path: {
+              postId: post.id,
+              typeCode: "attachment",
+            },
+          },
+          body: formData,
+          credentials: "include",
+        }
+      );
+
+      if (uploadResponse.error) {
+        alert(uploadResponse.error.msg);
+        return;
+      }
     }
 
     // 목록으로 이동, 내가 방금 작성한 글 상세 페이지 이동 => 리액트 방식의 페이지 이동
@@ -127,6 +153,27 @@ export default function ClinetPage({
           />
           <FormField
             control={form.control}
+            name="attachment_0"
+            render={({ field: { onChange, ...field } }) => (
+              <FormItem>
+                <FormLabel>첨부파일</FormLabel>
+                <FormControl>
+                  <Input
+                    type="file"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      onChange(file);
+                    }}
+                    {...field}
+                    value={undefined}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="content"
             render={({ field }) => (
               <FormItem>
@@ -135,7 +182,7 @@ export default function ClinetPage({
                   <Textarea
                     {...field}
                     placeholder="내용 입력"
-                    className="h-[calc(100dvh-300px)]"
+                    className="h-[calc(100dvh-460px)] min-h-[300px]"
                   />
                 </FormControl>
                 <FormMessage />

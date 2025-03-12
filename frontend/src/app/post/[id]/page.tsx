@@ -1,4 +1,4 @@
-import client from "@/lib/backend/client";
+import { client } from "@/lib/backend/client";
 import { cookies } from "next/headers";
 import ClientPage from "./ClientPage";
 
