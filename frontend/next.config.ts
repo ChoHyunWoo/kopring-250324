@@ -20,6 +20,10 @@ const nextConfig: NextConfig = {
         protocol: "http",
         hostname: "k.kakaocdn.net",
       },
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
     ],
     contentSecurityPolicy: "default-src 'self'; img-src 'self' data: https:;",
   },

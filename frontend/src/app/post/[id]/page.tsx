@@ -18,7 +18,27 @@ export default async function Page({
 
   const post = res.data.data;
 
-  return <ClientPage post={post} />;
+  const postGenFilesResponse = await client.GET(
+    "/api/v1/posts/{postId}/genFiles",
+    {
+      params: { path: { postId: post.id } },
+      headers: {
+        cookie: (await cookies()).toString(),
+      },
+    }
+  );
+
+  if (postGenFilesResponse.error) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        {postGenFilesResponse.error.msg}
+      </div>
+    );
+  }
+
+  const postGenFiles = postGenFilesResponse.data;
+
+  return <ClientPage post={post} postGenFiles={postGenFiles} />;
 }
 
 import ErrorPage from "@/components/business/ErrorPage";

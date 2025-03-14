@@ -1,6 +1,6 @@
 "use client";
 
-import client from "@/lib/backend/client";
+import { client } from "@/lib/backend/client";
 import { useRouter } from "next/navigation";
 
 export default function ClinetPage() {

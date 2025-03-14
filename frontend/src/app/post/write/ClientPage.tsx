@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import client from "@/lib/backend/client";
+import { client } from "@/lib/backend/client";
 import { useRouter } from "next/navigation";
 
 export default function ClinetPage() {
