@@ -2,9 +2,11 @@ package com.example.upload.global.init;
 
 import com.example.upload.domain.member.member.entity.Member;
 import com.example.upload.domain.member.member.service.MemberService;
+import com.example.upload.domain.post.genFile.entity.PostGenFile;
 import com.example.upload.domain.post.post.entity.Post;
 import com.example.upload.domain.post.post.service.PostService;
 import com.example.upload.global.app.AppConfig;
+import com.example.upload.standard.util.SampleResource;
 import com.example.upload.standard.util.Ut;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,22 +80,45 @@ public class BaseInitData {
         postService.write(user2, "title8", "content8", true, true);
         postService.write(user2, "title9", "content9", true, true);
 
-        String genFile1FilePath = Ut.file.downloadByHttp("https://picsum.photos/id/237/200/300", AppConfig.getTempDirPath());
-        post1.addGenFile("attachment", genFile1FilePath);
+        String genFile1FilePath = SampleResource.IMG_GIF_SAMPLE1.makeCopy();
+        post1.addGenFile(PostGenFile.TypeCode.attachment, genFile1FilePath);
 
-        String genFile2FilePath = Ut.file.downloadByHttp("https://picsum.photos/id/238/200/300", AppConfig.getTempDirPath());
-        post1.addGenFile("attachment", genFile2FilePath);
+        String genFile2FilePath = SampleResource.IMG_GIF_SAMPLE1.makeCopy();
+        post1.addGenFile(PostGenFile.TypeCode.attachment, genFile2FilePath);
 
-        String genFile3FilePath = Ut.file.downloadByHttp("https://picsum.photos/id/239/500/500", AppConfig.getTempDirPath());
-        post1.addGenFile("thumbnail", genFile3FilePath);
+        String genFile3FilePath = SampleResource.IMG_GIF_SAMPLE1.makeCopy();
+        post1.addGenFile(PostGenFile.TypeCode.thumbnail, genFile3FilePath);
 
-        post1.deleteGenFile("attachment", 2);
+        post1.deleteGenFile(PostGenFile.TypeCode.attachment, 2);
 
-        String genFile4FilePath = Ut.file.downloadByHttp("https://picsum.photos/id/240/600/500", AppConfig.getTempDirPath());
-        post1.modifyGenFile("thumbnail", 1, genFile4FilePath);
+        Post post10 = postService.write(
+                user2,
+                "테니스 하실 분있나요?",
+                "테니스 강력 추천합니다.",
+                true,
+                true
+        );
 
-        String genFile5FilePath = Ut.file.downloadByHttp("https://picsum.photos/id/241/500/500", AppConfig.getTempDirPath());
-        post1.putGenFile("attachment", 3, genFile5FilePath);
+        String genFile4FilePath = SampleResource.IMG_WEBP_SAMPLE1.makeCopy();
+        post10.addGenFile(PostGenFile.TypeCode.attachment, genFile4FilePath);
+
+        String genFile5FilePath = SampleResource.AUDIO_M4A_SAMPLE1.makeCopy();
+        post10.addGenFile(PostGenFile.TypeCode.attachment, genFile5FilePath);
+
+        String genFile6FilePath = SampleResource.AUDIO_MP3_SAMPLE1.makeCopy();
+        post10.addGenFile(PostGenFile.TypeCode.attachment, genFile6FilePath);
+
+        String genFile7FilePath = SampleResource.AUDIO_MP3_SAMPLE2.makeCopy();
+        post10.addGenFile(PostGenFile.TypeCode.attachment, genFile7FilePath);
+
+        String genFile8FilePath = SampleResource.VIDEO_MOV_SAMPLE1.makeCopy();
+        post10.addGenFile(PostGenFile.TypeCode.attachment, genFile8FilePath);
+
+        String genFile9FilePath = SampleResource.VIDEO_MP4_SAMPLE1.makeCopy();
+        post10.addGenFile(PostGenFile.TypeCode.attachment, genFile9FilePath);
+
+        String genFile10FilePath = SampleResource.VIDEO_MP4_SAMPLE2.makeCopy();
+        post10.addGenFile(PostGenFile.TypeCode.attachment, genFile10FilePath);
 
         for(int i = 10; i <= 100; i++) {
             postService.write(user1, "title" + i, "content" + i, i % 2 != 0, i % 3 != 0);

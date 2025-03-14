@@ -77,8 +77,10 @@ public class QPostGenFile extends EntityPathBase<PostGenFile> {
     //inherited
     public final StringPath publicUrl = _super.publicUrl;
 
+    public final EnumPath<PostGenFile.TypeCode> typeCode = createEnum("typeCode", PostGenFile.TypeCode.class);
+
     //inherited
-    public final StringPath typeCode = _super.typeCode;
+    public final StringPath typeCodeAsStr = _super.typeCodeAsStr;
 
     public QPostGenFile(String variable) {
         this(PostGenFile.class, forVariable(variable), INITS);

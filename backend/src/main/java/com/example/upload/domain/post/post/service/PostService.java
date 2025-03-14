@@ -4,6 +4,7 @@ import com.example.upload.domain.member.member.entity.Member;
 import com.example.upload.domain.post.post.dto.PostListParamDto;
 import com.example.upload.domain.post.post.entity.Post;
 import com.example.upload.domain.post.post.repository.PostRepository;
+import com.example.upload.global.dto.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @RequiredArgsConstructor
@@ -76,5 +78,32 @@ public class PostService {
         Pageable pageable = PageRequest.of(postListParamDto.getPage() - 1, postListParamDto.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
         return postRepository.findByParam(postListParamDto, author, pageable);
 
+    }
+
+    public RsData<Post> findTempOrMake(Member author) {
+        AtomicBoolean isNew = new AtomicBoolean(false);
+
+        Post post = postRepository.findTop1ByAuthorAndPublishedAndTitleOrderByIdDesc(
+                author,
+                false,
+                "임시글"
+        ).orElseGet(() -> {
+            isNew.set(true);
+            return write(author, "임시글", "", false, false);
+        });
+
+        if (isNew.get()) {
+            return new RsData<>(
+                    "201-1",
+                    "%d번 임시글이 생성되었습니다.".formatted(post.getId()),
+                    post
+            );
+        }
+
+        return new RsData<>(
+                "200-1",
+                "%d번 임시글을 불러옵니다.".formatted(post.getId()),
+                post
+        );
     }
 }

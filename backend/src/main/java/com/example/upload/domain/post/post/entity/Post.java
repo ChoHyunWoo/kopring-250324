@@ -38,11 +38,11 @@ public class Post extends BaseTime {
     @Builder.Default
     private List<PostGenFile> genFiles = new ArrayList<>();
 
-    public PostGenFile addGenFile(String typeCode, String filePath) {
+    public PostGenFile addGenFile(PostGenFile.TypeCode typeCode, String filePath) {
         return addGenFile(typeCode, 0, filePath);
     }
-    
-    public PostGenFile addGenFile(String typeCode, int fileNo, String filePath) {
+
+    private PostGenFile addGenFile(PostGenFile.TypeCode typeCode, int fileNo, String filePath) {
 
         String originalFileName = Ut.file.getOriginalFileName(filePath);
         String fileExt = Ut.file.getFileExt(filePath);
@@ -81,7 +81,7 @@ public class Post extends BaseTime {
         return genFile;
     }
 
-    private int getNextGenFileNo(String typeCode) {
+    private int getNextGenFileNo(PostGenFile.TypeCode typeCode) {
         return genFiles.stream()
                 .filter(genFile -> genFile.getTypeCode().equals(typeCode))
                 .mapToInt(PostGenFile::getFileNo)
@@ -89,14 +89,14 @@ public class Post extends BaseTime {
                 .orElse(0) + 1;
     }
 
-    public Optional<PostGenFile> getGenFileByTypeCodeAndFileNo(String typeCode, int fileNo) {
+    public Optional<PostGenFile> getGenFileByTypeCodeAndFileNo(PostGenFile.TypeCode typeCode, int fileNo) {
         return genFiles.stream()
                 .filter(genFile -> genFile.getTypeCode().equals(typeCode))
                 .filter(genFile -> genFile.getFileNo() == fileNo)
                 .findFirst();
     }
 
-    public void deleteGenFile(String typeCode, int fileNo) {
+    public void deleteGenFile(PostGenFile.TypeCode typeCode, int fileNo) {
         getGenFileByTypeCodeAndFileNo(typeCode, fileNo)
                 .ifPresent(genFile -> {
                     String filePath = genFile.getFilePath();
@@ -105,7 +105,7 @@ public class Post extends BaseTime {
                 });
     }
 
-    public void modifyGenFile(String typeCode, int fileNo, String filePath) {
+    public void modifyGenFile(PostGenFile.TypeCode typeCode, int fileNo, String filePath) {
         getGenFileByTypeCodeAndFileNo(
                 typeCode,
                 fileNo
@@ -142,7 +142,7 @@ public class Post extends BaseTime {
                 });
     }
 
-    public void putGenFile(String typeCode, int fileNo, String filePath) {
+    public void putGenFile(PostGenFile.TypeCode typeCode, int fileNo, String filePath) {
         Optional<PostGenFile> opPostGenFile = getGenFileByTypeCodeAndFileNo(
                 typeCode,
                 fileNo

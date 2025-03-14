@@ -49,7 +49,10 @@ public class Ut {
             put("application/x-7z-compressed", "7z");
             put("application/vnd.rar", "rar");
             put("audio/mpeg", "mp3");
+            put("audio/x-m4a", "m4a");
+            put("audio/mp4", "m4a");
             put("audio/wav", "wav");
+            put("video/quicktime", "mov");
             put("video/mp4", "mp4");
             put("video/webm", "webm");
             put("video/x-msvideo", "avi");
@@ -59,7 +62,7 @@ public class Ut {
             return switch (ext) {
                 case "jpeg", "jpg", "gif", "png", "svg", "webp" -> "img";
                 case "mp4", "avi", "mov" -> "video";
-                case "mp3" -> "audio";
+                case "mp3", "m4a" -> "audio";
                 default -> "etc";
             };
         }
@@ -266,6 +269,18 @@ public class Ut {
         public static void delete(String filePath) {
             Files.deleteIfExists(Path.of(filePath));
         }
+
+        @SneakyThrows
+        public static void copy(String filePath, String newFilePath) {
+            mkdir(Paths.get(newFilePath).getParent().toString());
+
+            Files.copy(
+                    Path.of(filePath),
+                    Path.of(newFilePath),
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+        }
+
     }
 
     public static class str {
@@ -287,6 +302,11 @@ public class Ut {
             } catch (UnsupportedEncodingException e) {
                 return str;
             }
+        }
+
+
+        public static String removeDomain(String url) {
+            return url.replaceFirst("https?://[^/]+", "");
         }
     }
 

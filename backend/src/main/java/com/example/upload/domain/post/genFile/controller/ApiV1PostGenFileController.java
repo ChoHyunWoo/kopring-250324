@@ -39,7 +39,7 @@ public class ApiV1PostGenFileController {
     @Transactional
     public RsData<PostGenFileDto> makeNewFile(
             @PathVariable long postId,
-            @PathVariable String typeCode,
+            @PathVariable PostGenFile.TypeCode typeCode,
             @NonNull @RequestParam("file") @Schema(type = "string", format = "binary") MultipartFile file
     ) {
         Member actor = rq.getActor();

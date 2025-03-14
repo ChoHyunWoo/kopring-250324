@@ -40,5 +40,7 @@ public class RsData<T> {
         return !isSuccess();
     }
 
-
+    public <T> RsData<T> newDataOf(T data) {
+        return new RsData<>(code, msg, data);
+    }
 }

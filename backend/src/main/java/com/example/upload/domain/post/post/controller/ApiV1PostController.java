@@ -2,6 +2,7 @@ package com.example.upload.domain.post.post.controller;
 
 import com.example.upload.domain.member.member.entity.Member;
 import com.example.upload.domain.post.post.dto.PageDto;
+import com.example.upload.domain.post.post.dto.PostDto;
 import com.example.upload.domain.post.post.dto.PostListParamDto;
 import com.example.upload.domain.post.post.dto.PostWithContentDto;
 import com.example.upload.domain.post.post.entity.Post;
@@ -195,5 +196,22 @@ public class ApiV1PostController {
 
     }
 
+    record PostMakeTempResponseBody(
+            @NonNull
+            PostDto post
+    ) {
+    }
 
+    @Transactional
+    @PostMapping("/temp")
+    @Operation(summary = "임시 글 생성")
+    public RsData<PostMakeTempResponseBody> makeTemp() {
+        RsData<Post> findTempOrMakeRsData = postService.findTempOrMake(rq.getActor());
+
+        return findTempOrMakeRsData.newDataOf(
+                new PostMakeTempResponseBody(
+                        new PostDto(findTempOrMakeRsData.getData())
+                )
+        );
+    }
 }

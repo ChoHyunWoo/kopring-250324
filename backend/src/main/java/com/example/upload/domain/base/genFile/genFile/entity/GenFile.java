@@ -1,6 +1,5 @@
 package com.example.upload.domain.base.genFile.genFile.entity;
 
-import com.example.upload.domain.post.genFile.entity.PostGenFile;
 import com.example.upload.global.app.AppConfig;
 import com.example.upload.global.entity.BaseTime;
 import jakarta.persistence.MappedSuperclass;
@@ -17,7 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @MappedSuperclass
 public abstract class GenFile extends BaseTime {
-    private String typeCode;
+
     private int fileNo;
     private String originalFileName;
     private String metadata;
@@ -29,7 +28,7 @@ public abstract class GenFile extends BaseTime {
     private long fileSize;
 
     public String getFilePath() {
-        return AppConfig.getGenFileDirPath() + "/" + getModelName() + "/" + typeCode + "/" + fileDateDir + "/" + fileName;
+        return AppConfig.getGenFileDirPath() + "/" + getModelName() + "/" + getTypeCodeAsStr() + "/" + fileDateDir + "/" + fileName;
     }
 
     @Override
@@ -38,15 +37,15 @@ public abstract class GenFile extends BaseTime {
 
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        PostGenFile that = (PostGenFile) o;
-        return fileNo == that.getFileNo() && Objects.equals(typeCode, that.getTypeCode());
+        GenFile that = (GenFile) o;
+        return fileNo == that.getFileNo() && Objects.equals(getTypeCodeAsStr(), that.getTypeCodeAsStr());
     }
 
     @Override
     public int hashCode() {
         if (getId() != null) return super.hashCode();
 
-        return Objects.hash(super.hashCode(), typeCode, fileNo);
+        return Objects.hash(super.hashCode(), getTypeCodeAsStr(), fileNo);
     }
 
     private String getOwnerModelName() {
@@ -58,8 +57,10 @@ public abstract class GenFile extends BaseTime {
     }
 
     public String getPublicUrl() {
-        return AppConfig.getSiteBackUrl() + "/gen/" + getModelName() + "/" + typeCode + "/" + fileDateDir + "/" + fileName;
+        return AppConfig.getSiteBackUrl() + "/gen/" + getModelName() + "/" + getTypeCodeAsStr() + "/" + fileDateDir + "/" + fileName;
     }
 
+
     abstract protected long getOwnerModelId();
+    abstract protected String getTypeCodeAsStr();
 }
