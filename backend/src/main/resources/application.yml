@@ -1,5 +1,8 @@
 server:
   port: 8080
+  tomcat:
+    max-swallow-size: 1GB
+    max-http-form-post-size: 1GB
 
 spring:
   output:
@@ -9,6 +12,11 @@ spring:
   profiles:
     active: dev
     include: secret
+
+  servlet:
+    multipart:
+      max-request-size: 5MB
+      max-file-size: ${spring.servlet.multipart.max-request-size}
 
   jackson:
     serialization:

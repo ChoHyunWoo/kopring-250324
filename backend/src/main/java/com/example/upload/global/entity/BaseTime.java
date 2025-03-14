@@ -27,4 +27,9 @@ public abstract class BaseTime extends BaseEntity {
     @Setter(AccessLevel.PRIVATE)
     @JsonProperty("modifiedAt")
     private LocalDateTime modifiedDate;
+
+    public void setCreateDateNow() {
+        this.createdDate = LocalDateTime.now();
+        this.modifiedDate = createdDate;
+    }
 }

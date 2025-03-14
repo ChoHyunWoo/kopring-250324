@@ -11,7 +11,8 @@ import com.example.upload.global.dto.RsData;
 import com.example.upload.global.exception.ServiceException;
 import com.example.upload.standard.util.Ut;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
@@ -35,12 +37,18 @@ public class ApiV1PostGenFileController {
     private final Rq rq;
 
     @PostMapping(value = "/{typeCode}", consumes = MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "등록")
+    @Operation(summary = "다건등록")
     @Transactional
-    public RsData<PostGenFileDto> makeNewFile(
+    public RsData<List<PostGenFileDto>> makeNewItems(
             @PathVariable long postId,
             @PathVariable PostGenFile.TypeCode typeCode,
-            @NonNull @RequestParam("file") @Schema(type = "string", format = "binary") MultipartFile file
+            @Parameter(
+                    description = "업로드할 파일 목록",
+                    content = @Content(
+                            mediaType = "multipart/form-data"
+                    )
+            )
+            @NonNull @RequestPart("files") MultipartFile[] files
     ) {
         Member actor = rq.getActor();
 
@@ -50,19 +58,26 @@ public class ApiV1PostGenFileController {
 
         post.checkActorCanMakeNewGenFile(actor);
 
-        String filePath = Ut.file.toFile(file, AppConfig.getTempDirPath());
+        List<PostGenFile> postGenFiles = new ArrayList<>();
 
-        PostGenFile postGenFile = post.addGenFile(
-                typeCode,
-                filePath
-        );
+        for (MultipartFile file : files) {
+            if (file.isEmpty()) continue;
+
+            String filePath = Ut.file.toFile(file, AppConfig.getTempDirPath());
+
+            postGenFiles.add(
+                    post.addGenFile(
+                            typeCode,
+                            filePath
+                    ));
+        }
 
         postService.flush();
 
         return new RsData<>(
                 "201-1",
-                "%d번 파일이 생성되었습니다.".formatted(postGenFile.getId()),
-                new PostGenFileDto(postGenFile)
+                "%d개의 파일이 생성되었습니다.".formatted(postGenFiles.size()),
+                postGenFiles.stream().map(PostGenFileDto::new).toList()
         );
     }
 

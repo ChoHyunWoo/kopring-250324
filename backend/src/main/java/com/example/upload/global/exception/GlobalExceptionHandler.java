@@ -1,6 +1,7 @@
 package com.example.upload.global.exception;
 
 import com.example.upload.global.app.AppConfig;
+import com.example.upload.global.dto.Empty;
 import com.example.upload.global.dto.RsData;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.stream.Collectors;
 
@@ -65,6 +67,19 @@ public class GlobalExceptionHandler {
                                 "잘못된 요청입니다."
                         )
                 );
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<RsData<Empty>> handle(MaxUploadSizeExceededException ex) {
+
+        if (AppConfig.isNotProd()) ex.printStackTrace();
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new RsData<>(
+                        "413-1",
+                        "업로드되는 개별 파일의 용량은 %s(을)를 초과할 수 없습니다.".formatted(AppConfig.getSpringServletMultipartMaxFileSize())
+                ));
     }
 
     @ExceptionHandler({RuntimeException.class})

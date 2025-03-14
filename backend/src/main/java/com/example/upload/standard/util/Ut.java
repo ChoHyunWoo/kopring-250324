@@ -281,6 +281,14 @@ public class Ut {
             );
         }
 
+        public static String getContentType(String fileExt) {
+            return MIME_TYPE_MAP.entrySet()
+                    .stream()
+                    .filter(entry -> entry.getValue().equals(fileExt))
+                    .map(Map.Entry::getKey)
+                    .findFirst()
+                    .orElse("");
+        }
     }
 
     public static class str {
