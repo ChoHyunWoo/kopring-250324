@@ -7,7 +7,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import client from "@/lib/backend/client";
+import { client } from "@/lib/backend/client";
 import { LoginMemberContext } from "@/stores/auth/loginMemberStore";
 import Image from "next/image";
 import Link from "next/link";

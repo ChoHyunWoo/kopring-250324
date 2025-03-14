@@ -10,6 +10,7 @@ const client = createClient<paths>({
   headers: {
     "Content-Type": "application/json",
   },
+  credentials: "include",
 });
 
 export { client, clientWithNoHeaders };
