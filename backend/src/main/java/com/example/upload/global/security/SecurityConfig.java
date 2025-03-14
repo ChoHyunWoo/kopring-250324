@@ -33,7 +33,7 @@ public class SecurityConfig {
                         authorizeHttpRequests
                                 .requestMatchers("/h2-console/**")
                                 .permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/*/posts/{id:\\d+}", "/api/*/posts", "/api/*/posts/{postId:\\d+}/comments")
+                                .requestMatchers(HttpMethod.GET, "/api/*/posts/{id:\\d+}", "/api/*/posts", "/api/*/posts/{postId:\\d+}/comments", "/api/*/posts/{postId:\\d+}/genFiles")
                                 .permitAll()
                                 .requestMatchers("/api/*/members/login", "/api/*/members/join", "/api/*/members/logout")
                                 .permitAll()

@@ -63,6 +63,11 @@ springdoc:
 
 
 custom:
+  dev:
+    domain: localhost
+    backUrl: "http://${custom.dev.domain}:${server.port}"
+  site:
+    backUrl: "${custom.dev.backUrl}"
   jwt:
     expire-seconds: "#{5}"
   genFile:

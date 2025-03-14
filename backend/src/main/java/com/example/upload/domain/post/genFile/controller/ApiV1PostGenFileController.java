@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
@@ -62,5 +64,22 @@ public class ApiV1PostGenFileController {
                 "%d번 파일이 생성되었습니다.".formatted(postGenFile.getId()),
                 new PostGenFileDto(postGenFile)
         );
+    }
+
+    @GetMapping
+    @Transactional(readOnly = true)
+    @Operation(summary = "다건조회")
+    public List<PostGenFileDto> items(
+            @PathVariable long postId
+    ) {
+        Post post = postService.getItem(postId).orElseThrow(
+                () -> new ServiceException("404-1", "%d번 글은 존재하지 않습니다.".formatted(postId))
+        );
+
+        return post
+                .getGenFiles()
+                .stream()
+                .map(PostGenFileDto::new)
+                .toList();
     }
 }

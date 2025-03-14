@@ -35,6 +35,10 @@ public class PostGenFileDto {
     private String fileDateDir;
     @NonNull
     private String originalFileName;
+    @NonNull
+    private String downloadUrl;
+    @NonNull
+    private String publicUrl;
 
     public PostGenFileDto(PostGenFile postGenFile) {
         this.id = postGenFile.getId();
@@ -50,5 +54,7 @@ public class PostGenFileDto {
         this.fileExt = postGenFile.getFileExt();
         this.fileDateDir = postGenFile.getFileDateDir();
         this.originalFileName = postGenFile.getOriginalFileName();
+        this.downloadUrl = postGenFile.getDownloadUrl();
+        this.publicUrl = postGenFile.getPublicUrl();
     }
 }

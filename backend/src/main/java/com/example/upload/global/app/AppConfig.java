@@ -19,6 +19,14 @@ public class AppConfig {
 
     private static Environment environment;
 
+    @Getter
+    private static String siteBackUrl;
+
+    @Value("${custom.site.backUrl}")
+    public void setSiteBackUrl(String siteBackUrl) {
+        AppConfig.siteBackUrl = siteBackUrl;
+    }
+
     @Autowired
     public void setEnvironment(Environment environment) {
         AppConfig.environment = environment;
