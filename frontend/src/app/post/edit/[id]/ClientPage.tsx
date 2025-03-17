@@ -24,7 +24,7 @@ const editFormSchema = z.object({
   content: z.string().min(1, "내용을 입력해주세요."),
   published: z.boolean().optional(),
   listed: z.boolean().optional(),
-  attachment_0: z.instanceof(File).optional(),
+  attachment_0: z.array(z.instanceof(File)).optional(),
 });
 
 type WriteInputs = z.infer<typeof editFormSchema>;
@@ -72,7 +72,8 @@ export default function ClinetPage({
     // 파일 업로드 처리
     if (data.attachment_0) {
       const formData = new FormData();
-      formData.append("file", data.attachment_0);
+      for (const file of [...data.attachment_0].reverse())
+        formData.append("files", file);
 
       const uploadResponse = await clientWithNoHeaders.POST(
         "/api/v1/posts/{postId}/genFiles/{typeCode}",
@@ -83,7 +84,7 @@ export default function ClinetPage({
               typeCode: "attachment",
             },
           },
-          body: formData,
+          body: formData as any, // eslint-disable-line @typescript-eslint/no-explicit-any
           credentials: "include",
         }
       );
@@ -160,9 +161,10 @@ export default function ClinetPage({
                 <FormControl>
                   <Input
                     type="file"
+                    multiple
                     onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      onChange(file);
+                      const files = Array.from(e.target.files || []);
+                      onChange(files);
                     }}
                     {...field}
                     value={undefined}
