@@ -6,19 +6,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
+
 
 @MappedSuperclass
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@SuperBuilder
+
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class BaseEntity {
 
     @Id // PRIMARY KEY
     @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
-    @Setter(AccessLevel.PRIVATE)
+    @Setter(AccessLevel.PROTECTED)
     @EqualsAndHashCode.Include
     private Long id; // long -> null X, Long -> null O
 
