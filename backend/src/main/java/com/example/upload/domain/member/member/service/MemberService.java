@@ -65,7 +65,6 @@ public class MemberService {
                 new Member(
                         id,
                         username,
-                        username,
                         nickname
                 )
         );
